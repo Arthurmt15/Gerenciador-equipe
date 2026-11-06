@@ -1,36 +1,42 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Ritmo
 
-## Getting Started
+Gerenciador Kanban responsivo construído com Next.js 16, React 19 e Supabase.
 
-First, run the development server:
+## Desenvolvimento
+
+Requer Node.js 22 ou superior.
 
 ```bash
+npm install
+cp .env.example .env.local
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Sem variáveis de ambiente, `/board` funciona em modo demonstração. Com Supabase configurado, autenticação, isolamento por usuário e persistência ficam ativos.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Supabase
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Crie um projeto e ative Google em **Authentication > Providers**.
+2. Adicione `http://localhost:3000/auth/callback` e a URL da Vercel às URLs de redirecionamento.
+3. Vincule o CLI e aplique a migration:
 
-## Learn More
+```bash
+npx supabase login
+npx supabase link --project-ref SEU_PROJECT_REF
+npx supabase db push
+```
 
-To learn more about Next.js, take a look at the following resources:
+A migration em `supabase/migrations` cria perfis, workspaces, membros, quadros, colunas, cartões, etiquetas, índices, triggers e políticas RLS. Cada usuário Google recebe automaticamente um workspace e um quadro privados.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Vercel
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Configure `NEXT_PUBLIC_SUPABASE_URL` e `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` no projeto da Vercel. O runtime está fixado em Node.js 22+ pelo campo `engines`.
 
-## Deploy on Vercel
+## Qualidade
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npm test
+npm run lint
+npm run typecheck
+npm run build
+```
